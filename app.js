@@ -44,7 +44,7 @@ app.post("/register", async (req, res) => {
       { user_id: user._id, email },
       process.env.TOKEN_KEY,
       {
-        expiresIn: "2h",
+        expiresIn: "8h",
       }
     );
     // save user token
