@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 
 require("dotenv").config();
 
-const PORT = 5000;
+const PORT = 8092;
 
 mongoose.set("strictQuery", true);
 mongoose.connect("mongodb://localhost:27017/XR", {
