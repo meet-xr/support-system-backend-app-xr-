@@ -109,50 +109,6 @@ exports.Login = async (req, res) => {
         });
     }
 };
-exports.Activate = async (req, res) => {
-    try {
-        const { email, code } = req.body;
-        if (!email || !code) {
-            return res.json({
-                error: true,
-                status: 400,
-                message: "Please make a valid request",
-            });
-        }
-        const user = await User.findOne({
-            email: email,
-            emailToken: code,
-            emailTokenExpires: { $gt: Date.now() }, // check if the code is expired
-        });
-        if (!user) {
-            return res.status(400).json({
-                error: true,
-                message: "Invalid details",
-            });
-        } else {
-            if (user.active)
-                return res.send({
-                    error: true,
-                    message: "Account already activated",
-                    status: 400,
-                });
-            user.emailToken = "";
-            user.emailTokenExpires = null;
-            user.active = true;
-            await user.save();
-            return res.status(200).json({
-                success: true,
-                message: "Account activated.",
-            });
-        }
-    } catch (error) {
-        console.error("activation-error", error);
-        return res.status(500).json({
-            error: true,
-            message: error.message,
-        });
-    }
-};
 exports.ForgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -241,3 +197,4 @@ exports.ResetPassword = async (req, res) => {
         });
     }
 };
+
