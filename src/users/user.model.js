@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
+const { string } = require("joi");
 
 const userSchema = new Schema(
     {
@@ -10,6 +11,7 @@ const userSchema = new Schema(
         resetPasswordExpires: { type: Date, default: null },
         emailToken: { type: String, default: null },
         emailTokenExpires: { type: Date, default: null },
+
     },
     {
         timestamps: {

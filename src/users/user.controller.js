@@ -1,6 +1,8 @@
 const Joi = require("joi");
 require("dotenv").config();
 const { v4: uuid } = require("uuid");
+const bcrypt = require("bcrypt");
+//const multer = require("multer");
 const { sendEmail } = require("./helpers/mailer");
 const User = require("./user.model");
 //Validate user schema
@@ -9,6 +11,9 @@ const userSchema = Joi.object().keys({
     password: Joi.string().required().min(4),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
 });
+
+// signup api code 
+
 exports.Signup = async (req, res) => {
     try {
         const result = userSchema.validate(req.body);
@@ -33,20 +38,22 @@ exports.Signup = async (req, res) => {
         const hash = await User.hashPassword(result.value.password);
         const id = uuid(); //Generate unique id for the user.
         result.value.userId = id;
+
         //remove the confirmPassword field from the result as we don't need to save this in the db.
         delete result.value.confirmPassword;
         result.value.password = hash;
-        let code = Math.floor(100000 + Math.random() * 900000);  //Generate random 6 digit code.                             
-        let expiry = Date.now() + 60 * 1000 * 15;  //Set expiry 15 mins ahead from now
-        const sendCode = await sendEmail(result.value.email, code);
-        if (sendCode.error) {
-            return res.status(500).json({
-                error: true,
-                message: "Couldn't send verification email.",
-            });
-        }
-        result.value.emailToken = code;
-        result.value.emailTokenExpires = new Date(expiry);
+
+        // let code = 111111// Math.floor(100000 + Math.random() * 900000);  //Generate random 6 digit code.                             
+        // let expiry = Date.now() + 60 * 1000 * 15;  //Set expiry 15 mins ahead from now
+        // const sendCode = await sendEmail(result.value.email, code);
+        // if (sendCode.error) {
+        //     return res.status(500).json({
+        //         error: true,
+        //         message: "Couldn't send verification email.",
+        //     });
+        // }
+        // result.value.emailToken = code;
+        // result.value.emailTokenExpires = new Date(expiry);
         const newUser = new User(result.value);
         await newUser.save();
         return res.status(200).json({
@@ -61,6 +68,9 @@ exports.Signup = async (req, res) => {
         });
     }
 };
+
+// signin api code
+
 exports.Login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -79,15 +89,10 @@ exports.Login = async (req, res) => {
                 message: "Account not found",
             });
         }
-        //2. Throw error if account is not activated
-        if (!user.active) {
-            return res.status(400).json({
-                error: true,
-                message: "You must verify your email to activate your account",
-            });
-        }
-        //3. Verify the password is valid
-        const isValid = await User.comparePasswords(password, user.password);
+
+        //2. Verify the password is valid
+        const isValid = await bcrypt.compare(password, user.password);
+
         if (!isValid) {
             return res.status(400).json({
                 error: true,
@@ -109,6 +114,9 @@ exports.Login = async (req, res) => {
         });
     }
 };
+
+// ForgotPassword api code
+
 exports.ForgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -129,7 +137,7 @@ exports.ForgotPassword = async (req, res) => {
                     "If that email address is in our database, we will send you an email to reset your password",
             });
         }
-        let code = Math.floor(100000 + Math.random() * 900000);
+        let code = 111111 // Math.floor(100000 + Math.random() * 900000);
         let response = await sendEmail(user.email, code);
         if (response.error) {
             return res.status(500).json({
@@ -154,6 +162,9 @@ exports.ForgotPassword = async (req, res) => {
         });
     }
 };
+
+//  ResetPassword api code
+
 exports.ResetPassword = async (req, res) => {
     try {
         const { token, newPassword, confirmPassword } = req.body;
@@ -197,4 +208,5 @@ exports.ResetPassword = async (req, res) => {
         });
     }
 };
+
 

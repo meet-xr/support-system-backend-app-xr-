@@ -1,14 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const multer = require('multer');
+
 
 require("dotenv").config();
 
 const PORT = 5000;
 
 mongoose.set("strictQuery", true);
-mongoose.connect("mongodb://localhost:27017", {
+mongoose.connect("mongodb://localhost:27017/XR", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
@@ -28,3 +28,5 @@ app.use("/users", require("./routes/users"));
 app.listen(PORT, () => {
     console.log("Server started listening on http://localhost:" + PORT);
 });
+
+
