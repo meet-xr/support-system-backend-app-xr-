@@ -1,16 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
-const { string } = require("joi");
+
+
+//userSchema
 
 const userSchema = new Schema(
     {
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
-        resetPasswordToken: { type: String, default: null },
+        resetPasswordToken: { type: String, default: 111111 },
         resetPasswordExpires: { type: Date, default: null },
         emailToken: { type: String, default: null },
         emailTokenExpires: { type: Date, default: null },
+        accessToken: { type: String, default: null }
 
     },
     {
@@ -32,4 +35,3 @@ module.exports.hashPassword = async (password) => {
         throw new Error("Hashing failed", error);
     }
 };
-

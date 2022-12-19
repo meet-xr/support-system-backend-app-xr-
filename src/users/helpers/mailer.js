@@ -4,11 +4,13 @@ async function sendEmail(email, code) {
     try {
         const smtpEndpoint = "smtp.sendgrid.net";
         const port = 465;
-        const senderAddress = "ribadiyameet1@gmail.com";
+        const senderAddress = "NAME <ADDRESS>";
         var toAddress = email;
         const smtpUsername = "apikey";
         const smtpPassword = process.env.SG_APIKEY;
         var subject = "Verify your email";
+
+
         // The body of the email for recipients
         var body_html = `<!DOCTYPE> 
     <html>
@@ -16,6 +18,7 @@ async function sendEmail(email, code) {
         <p>Your authentication code is : </p> <b>${code}</b>
       </body>
     </html>`;
+
         // Create the SMTP transport.
         let transporter = nodemailer.createTransport({
             host: smtpEndpoint,

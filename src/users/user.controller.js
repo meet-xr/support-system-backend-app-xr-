@@ -2,11 +2,11 @@ const Joi = require("joi");
 require("dotenv").config();
 const { v4: uuid } = require("uuid");
 const bcrypt = require("bcrypt");
-const multer = require("multer");
-const path = require("path");
+
+const { generateJwt } = require("./helpers/generateJwt");
 const { sendEmail } = require("./helpers/mailer");
 const User = require("./user.model");
-const ImageModel = require('./user.model');
+
 
 //Validate user schema
 const userSchema = Joi.object().keys({
@@ -108,10 +108,23 @@ exports.Login = async (req, res) => {
         }
         await user.save();
 
+        //Generate Access token
+        const { error, token } = await generateJwt(user.email, user.userId);
+        if (error) {
+            return res.status(500).json({
+                error: true,
+                message: "Couldn't create access token. Please try again later",
+            });
+        }
+        user.accessToken = token;
+
+        await user.save();
+
         //Success
         return res.send({
             success: true,
             message: "User logged in successfully",
+            accessToken: token,  //Send it to the client
         });
     } catch (err) {
         console.error("Login error", err);
@@ -217,3 +230,20 @@ exports.ResetPassword = async (req, res) => {
 };
 
 
+//log out api code
+
+exports.Logout = async (req, res) => {
+    try {
+        const { id } = req.decoded;
+        let user = await User.findOne({ userId: id });
+        user.accessToken = "";
+        await user.save();
+        return res.send({ success: true, message: "User Logged out" });
+    } catch (error) {
+        console.error("user-logout-error", error);
+        return res.status(500).json({
+            error: true,
+            message: error.message,
+        });
+    }
+};
