@@ -2,15 +2,25 @@ const Joi = require("joi");
 require("dotenv").config();
 const { v4: uuid } = require("uuid");
 const bcrypt = require("bcrypt");
-//const multer = require("multer");
+const multer = require("multer");
+const path = require("path");
 const { sendEmail } = require("./helpers/mailer");
 const User = require("./user.model");
+const ImageModel = require('./user.model');
+
 //Validate user schema
 const userSchema = Joi.object().keys({
     email: Joi.string().email({ minDomainSegments: 2 }),
     password: Joi.string().required().min(4),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
 });
+//Validate image schema
+const imageSchema = Joi.object().keys({
+    name: Joi.string().required(),
+    description: Joi.string().required(),
+    img: Joi.string().required(),
+});
+
 
 // signup api code 
 
@@ -36,7 +46,7 @@ exports.Signup = async (req, res) => {
             });
         }
         const hash = await User.hashPassword(result.value.password);
-        const id = uuid(); //Generate unique id for the user.
+        const id = uuid();             //Generate unique id for the user.
         result.value.userId = id;
 
         //remove the confirmPassword field from the result as we don't need to save this in the db.
@@ -81,7 +91,9 @@ exports.Login = async (req, res) => {
             });
         }
         //1. Find if any account with that email exists in DB
+
         const user = await User.findOne({ email: email });
+
         // NOT FOUND - Throw error
         if (!user) {
             return res.status(404).json({
@@ -91,6 +103,7 @@ exports.Login = async (req, res) => {
         }
 
         //2. Verify the password is valid
+
         const isValid = await bcrypt.compare(password, user.password);
 
         if (!isValid) {
@@ -210,3 +223,38 @@ exports.ResetPassword = async (req, res) => {
 };
 
 
+// upload image api code
+
+// exports.uploadimage = async (req, res) => {
+//     try {
+//         const { ImageModel } = req.body;
+//         const multer = require('multer');
+//         const storage = multer.diskStorage({
+//             destination: function (req, file, callback) {
+//                 callback(null, 'images');
+//             },
+//             filename: function (req, file, callback) {
+//                 callback(null, file.fieldname);
+//             }
+//         });
+//         const upload = multer({ storage: storage });
+//         if (!ImageModel) {
+//             console.log("No image received");
+//             return res.send({
+//                 success: false
+//             });
+//         } else {
+//             console.log('image received');
+//             return res.send({
+//                 success: true
+//             })
+//         }
+//     }
+//     catch (error) {
+//         console.error("upload-image-error", error);
+//         return res.status(500).json({
+//             error: true,
+//             message: error.message,
+//         });
+//     }
+// };

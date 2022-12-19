@@ -21,6 +21,7 @@ mongoose.connect("mongodb://localhost:27017/XR", {
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); //optional
+app.set("view engine", "ejs");
 
 
 
