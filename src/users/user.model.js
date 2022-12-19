@@ -32,15 +32,4 @@ module.exports.hashPassword = async (password) => {
         throw new Error("Hashing failed", error);
     }
 };
-const imageSchema = new Schema({
-    name: { type: String, required: true },
-    description: { type: String, required: true },
-    date: Date,
-    img:
-    {
-        data: Buffer,
-        contentType: String,
-    }
-});
-const ImageModel = mongoose.model("Image", imageSchema);
-module.exports = ImageModel;
+

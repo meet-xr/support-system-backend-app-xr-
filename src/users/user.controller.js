@@ -14,12 +14,6 @@ const userSchema = Joi.object().keys({
     password: Joi.string().required().min(4),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
 });
-//Validate image schema
-const imageSchema = Joi.object().keys({
-    name: Joi.string().required(),
-    description: Joi.string().required(),
-    img: Joi.string().required(),
-});
 
 
 // signup api code 
@@ -223,38 +217,3 @@ exports.ResetPassword = async (req, res) => {
 };
 
 
-// upload image api code
-
-// exports.uploadimage = async (req, res) => {
-//     try {
-//         const { ImageModel } = req.body;
-//         const multer = require('multer');
-//         const storage = multer.diskStorage({
-//             destination: function (req, file, callback) {
-//                 callback(null, 'images');
-//             },
-//             filename: function (req, file, callback) {
-//                 callback(null, file.fieldname);
-//             }
-//         });
-//         const upload = multer({ storage: storage });
-//         if (!ImageModel) {
-//             console.log("No image received");
-//             return res.send({
-//                 success: false
-//             });
-//         } else {
-//             console.log('image received');
-//             return res.send({
-//                 success: true
-//             })
-//         }
-//     }
-//     catch (error) {
-//         console.error("upload-image-error", error);
-//         return res.status(500).json({
-//             error: true,
-//             message: error.message,
-//         });
-//     }
-// };
