@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+require("dotenv").config();
 
 
 require("dotenv").config();
@@ -8,12 +9,12 @@ require("dotenv").config();
 const PORT = 8092;
 
 mongoose.set("strictQuery", true);
-mongoose.connect("mongodb://localhost:27017/XR", {
+mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
     .then(() => {
-        console.log("Database connection Success.");
+        console.log("Database connection Successfully.....");
     })
     .catch((err) => {
         console.error("Mongo Connection Error", err);
