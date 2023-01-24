@@ -35,3 +35,5 @@ module.exports.hashPassword = async (password) => {
         throw new Error("Hashing failed", error);
     }
 };
+
+

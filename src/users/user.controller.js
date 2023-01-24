@@ -3,6 +3,7 @@ require("dotenv").config();
 const { v4: uuid } = require("uuid");
 const bcrypt = require("bcrypt");
 
+
 const { generateJwt } = require("./helpers/generateJwt");
 const { sendEmail } = require("./helpers/mailer");
 const User = require("./user.model");
